@@ -1,0 +1,112 @@
+# 02/08/2024
+# Mohammad Hoque
+
+# A program that simulates non-disparate data warehousing.
+
+import random
+import string
+from pprint import pprint
+
+def generate_user_data(num_users):
+    # Generates diverse user records with various attributes.
+    users = []
+    salespersons = ["John", "Jane", "Smith", "Doe", "Williams"]
+
+    for i in range(num_users):
+        username = "".join(random.choices(string.ascii_letters + string.digits, k=10))
+        password = "".join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=20))
+        birthdate = f"{random.randint(1950, 2000):04d}-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
+        address = f"{random.randint(100, 999)} {random.choice(['Main St', 'Maple Ave', 'Oak Blvd'])}, City"
+        social_security_number = "".join(random.choices(string.digits, k=9))
+        product_id = "ID-" + "".join(random.choices(string.ascii_letters + string.digits, k=10))
+        web_order = f"WO-{random.randint(1000, 9999)}"
+        quantity = random.randint(1, 10)
+        date_of_order = f"{random.randint(2010, 2022):04d}-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
+        region = random.choice(['North', 'South', 'East', 'West'])
+        salesperson = random.choice(salespersons)
+
+        # Include additional details for the ProductPurchased attribute
+        product_purchased = {
+            "productID": product_id,
+            "webOrderID": web_order,
+            "quantityPurchased": quantity,
+            "orderDate": date_of_order,
+            "region": region,
+        }
+
+        # Assemble user data with ProductPurchased details, including state
+        state = random.choice(['CA', 'NY', 'TX', 'FL', 'IL'])
+        user = {
+            "username": username,
+            "password": password,
+            "birthdate": birthdate,
+            "address": address,
+            "social_security_number": social_security_number,
+            "productPurchased": product_purchased,
+            "salesperson": salesperson,
+            "state": state,
+        }
+
+        users.append(user)
+
+    return users
+
+# Create key-value pairs from user data
+def key_value_pairs(users):
+    # Creates key-value pairs from user data. The username serves as the key, and the associated value is a dictionary containing all user attributes.
+    data_store = {}
+    for user in users:
+        data_store[user["username"]] = user
+
+    return data_store
+
+# Search the data store based on specified criteria
+def search_data_store(data_store, search_criteria):
+    # Searches the data store for users that match specified criteria.
+    results = []
+    for username, user in data_store.items():
+        # Check if all search criteria match
+        criteria_match = all(user.get(key) == value for key, value in search_criteria.items())
+        if criteria_match:
+            results.append(user)
+
+    return results
+
+# Define a function to print user data nicely
+def print_nicely(user_data):
+    for user in user_data:
+        print("\nUser:")
+        for key, value in user.items():
+            if isinstance(value, dict):
+                print(f"  {key}:")
+                for sub_key, sub_value in value.items():
+                    print(f"    {sub_key}: {sub_value}")
+            else:
+                print(f"  {key}: {value}")
+
+# Generate sample user data with states
+sample_data = generate_user_data(5)
+data_store = key_value_pairs(sample_data)
+
+# Search for users in a certain state
+state_results = search_data_store(data_store, {"state": "CA"})
+
+# Search for users handled by a certain salesperson
+salesperson_results = search_data_store(data_store, {"salesperson": "John"})
+
+# Display the entire list of users in an organized manner using pprint
+print("Generated User Data:")
+pprint(sample_data)
+
+# Display state search results
+print("\nUsers in CA:")
+print_nicely(state_results)
+
+# Display salesperson search results
+print("\nUsers handled by John:")
+print_nicely(salesperson_results)
+
+# 02/15/2024
+# End Mohammad Hoque
+
+
